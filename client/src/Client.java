@@ -4,38 +4,41 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Client {
-    private static Socket socket;
-    private static PrintWriter printWriter;
-    private static Scanner scanner;
-    public static int EXIT_SERVER = 000001;
-    public static int WAIT_SERVER = 000010;
+public class Client extends Thread {
+    private Socket socket;
+    private PrintWriter printWriter;
+    private Scanner scanner;
+    private int PORT;
+    private String ADDRESS;
+    private int EXIT_SERVER = 000001;
 
-    private static void initSocket() throws IOException {
-       socket = new Socket("localhost", 1000);
+    public Client(String address, int port) {
+        PORT = port;
+        ADDRESS = address;
+    }
+
+    private void initSocket() throws IOException {
+       socket = new Socket(ADDRESS, PORT);
        scanner = new Scanner(socket.getInputStream());
        printWriter = new PrintWriter(socket.getOutputStream(), true);
     }
 
-    private static void getMessage(Socket socket) {
+    private void getMessage(Socket socket) {
         if(scanner.hasNextLine()) {
             System.out.println(" -> " + scanner.nextLine());
         }
     }
-    private static int setMessage(Socket socket) {
+    private int setMessage(Socket socket) {
         System.out.print(" <- ");
         String message = new Scanner(System.in).nextLine();
-        if(!message.equals("")) {
-            printWriter.println(message);
-            if(message.equals("EXIT_SERVER")) {
-                return EXIT_SERVER;
-            }
-            return 0;
+        printWriter.println(message);
+        if(message.equals("EXIT_SERVER")) {
+            return EXIT_SERVER;
         }
-        return WAIT_SERVER;
+        return 0;
     }
-
-    public static void main(String[] args) {
+    @Override
+    public void run() {
         try {
             initSocket();
             getMessage(socket);
