@@ -17,12 +17,12 @@ public class Client {
        printWriter = new PrintWriter(socket.getOutputStream(), true);
     }
 
-    private static void getMessage(Socket socket) throws IOException {
+    private static void getMessage(Socket socket) {
         if(scanner.hasNextLine()) {
             System.out.println(" -> " + scanner.nextLine());
         }
     }
-    private static int setMessage(Socket socket) throws IOException {
+    private static int setMessage(Socket socket) {
         System.out.print(" <- ");
         String message = new Scanner(System.in).nextLine();
         if(!message.equals("")) {
