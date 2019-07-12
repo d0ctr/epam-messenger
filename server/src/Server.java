@@ -4,21 +4,24 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Server {
-    private static ServerSocket serverSocket;
-    private static Socket client;
-    private static Scanner scanner;
-    private static PrintWriter printWriter;
-    private static int PORT;
-    public static int EXIT_SERVER = 000001;
+public class Server extends Thread {
+    private ServerSocket serverSocket;
+    private Socket client;
+    private Scanner scanner;
+    private PrintWriter printWriter;
+    private int PORT;
+    private int EXIT_SERVER = 000001;
 
-    public static void initServer() throws IOException {
-        serverSocket = new ServerSocket(1000);
-        PORT = serverSocket.getLocalPort();
+    public Server(int port) {
+        PORT = port;
+    }
+
+    private void initServer() throws IOException {
+        serverSocket = new ServerSocket(PORT);
         System.err.println("Server inited at port " + PORT);
     }
 
-    public static int getMessage(Socket client) throws IOException{
+    private int getMessage(Socket client) throws IOException{
         scanner = new Scanner(client.getInputStream());
         if(scanner.hasNextLine())
         {
@@ -33,12 +36,13 @@ public class Server {
         return 0;
     }
 
-    public static void setMessage(Socket client, String message) throws IOException{
+    private void setMessage(Socket client, String message) throws IOException{
         printWriter = new PrintWriter(client.getOutputStream(), true);
         printWriter.println(message);
     }
 
-    public static void main(String[] args) {
+    @Override
+    public void run() {
         try {
             initServer();
             client = serverSocket.accept();
@@ -48,10 +52,8 @@ public class Server {
                     break;
                 }
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }
