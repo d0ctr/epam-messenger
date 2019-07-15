@@ -10,8 +10,8 @@ In Project Structure settings:
 
 - Specify out folders
 ## Launch Server
-Choose ServerRunner as main class and build an application.
+Choose ServerRunner as main class, specify port as command line argument and build an application.
 ## Launch Client
-Choose ClientRunner as main class and build an application.
+Choose ClientRunner as main class, specify port as command line argument and build an application.
 # Trello
 https://trello.com/invite/b/yKLKpBr3/e7abab8d0869f70fd8f79a9bf3ada18f/epam-messenger
