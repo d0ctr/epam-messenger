@@ -1,16 +1,17 @@
 # epam-messenger
 # How to start
-## Basic settings
+## How to start
 ### If you are using IntelliJ IDEA
-- Specify JDK
+In Project Structure settings:
 
-- Specify out folder.
+- Specify JDK(must be at least Java 12)
 
-    For example, File -> Project Structure -> Modules. Here create folder out/production and out/test, make them Excluded. 
-    In paths for modules manually specify ouput paths like path_to_project/out/production or test.
+- Specify source folders.
+
+- Specify out folders
 ## Launch Server
-Choose server/Server.class as main class and build an application.
+Choose ServerRunner as main class, specify port as command line argument and build an application.
 ## Launch Client
-Choose client/Client.class as main class and build an application.
+Choose ClientRunner as main class, specify port as command line argument and build an application.
 # Trello
 https://trello.com/invite/b/yKLKpBr3/e7abab8d0869f70fd8f79a9bf3ada18f/epam-messenger

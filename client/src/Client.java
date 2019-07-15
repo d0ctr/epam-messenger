@@ -4,49 +4,47 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Client {
-    private static Socket socket;
-    private static PrintWriter printWriter;
-    private static Scanner scanner;
-    public static int EXIT_SERVER = 000001;
-    public static int WAIT_SERVER = 000010;
+public class Client implements Runnable {
+    private Socket socket;
+    private PrintWriter printWriter;
+    private Scanner socketScanner;
+    private Scanner inputScanner;
+    private int port;
+    private String address;
+    private final int EXIT_SERVER = 1;
 
-    private static void initSocket() throws IOException {
-       socket = new Socket("localhost", 1000);
-       scanner = new Scanner(socket.getInputStream());
+    public Client(String address, int port) {
+        this.port = port;
+        this.address = address;
+    }
+
+    private void initSocket() throws IOException {
+       socket = new Socket(address, port);
+       socketScanner = new Scanner(socket.getInputStream());
+       inputScanner = new Scanner(System.in);
        printWriter = new PrintWriter(socket.getOutputStream(), true);
     }
 
-    private static void getMessage(Socket socket) {
-        if(scanner.hasNextLine()) {
-            System.out.println(" -> " + scanner.nextLine());
+    private void receiveMessage(Socket socket) {
+        if(socketScanner.hasNextLine()) {
+            System.out.println(" -> " + socketScanner.nextLine());
         }
-    }
-    private static int setMessage(Socket socket) {
-        System.out.print(" <- ");
-        String message = new Scanner(System.in).nextLine();
-        if(!message.equals("")) {
-            printWriter.println(message);
-            if(message.equals("EXIT_SERVER")) {
-                return EXIT_SERVER;
-            }
-            return 0;
-        }
-        return WAIT_SERVER;
     }
 
-    public static void main(String[] args) {
+    private void setMessage(Socket socket) {
+        System.out.print(" <- ");
+        printWriter.println(inputScanner.nextLine());
+    }
+
+    public void run() {
         try {
             initSocket();
-            getMessage(socket);
+            receiveMessage(socket);
             while(true) {
-                if(setMessage(socket) == EXIT_SERVER) {
-                    break;
-                }
+                setMessage(socket);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 }
