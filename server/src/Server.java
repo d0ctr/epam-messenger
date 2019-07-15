@@ -4,21 +4,21 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Server extends Thread {
+public class Server implements Runnable {
     private ServerSocket serverSocket;
     private Socket client;
     private Scanner scanner;
     private PrintWriter printWriter;
-    private int PORT;
-    private int EXIT_SERVER = 000001;
+    private int port;
+    private final int EXIT_SERVER = 1;
 
     public Server(int port) {
-        PORT = port;
+        this.port= port;
     }
 
     private void initServer() throws IOException {
-        serverSocket = new ServerSocket(PORT);
-        System.err.println("Server inited at port " + PORT);
+        serverSocket = new ServerSocket(port);
+        System.err.println("Server inited at port " + port);
     }
 
     private int getMessage(Socket client) throws IOException{
@@ -41,7 +41,6 @@ public class Server extends Thread {
         printWriter.println(message);
     }
 
-    @Override
     public void run() {
         try {
             initServer();

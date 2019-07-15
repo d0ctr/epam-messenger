@@ -4,52 +4,46 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Client extends Thread {
+public class Client implements Runnable {
     private Socket socket;
     private PrintWriter printWriter;
     private Scanner scanner;
-    private int PORT;
-    private String ADDRESS;
-    private int EXIT_SERVER = 000001;
+    private int port;
+    private String address;
+    private final int EXIT_SERVER  = 1;
 
     public Client(String address, int port) {
-        PORT = port;
-        ADDRESS = address;
+        this.port = port;
+        this.address = address;
     }
 
     private void initSocket() throws IOException {
-       socket = new Socket(ADDRESS, PORT);
+       socket = new Socket(address, port);
        scanner = new Scanner(socket.getInputStream());
        printWriter = new PrintWriter(socket.getOutputStream(), true);
     }
 
-    private void getMessage(Socket socket) {
+    private void receiveMessage(Socket socket) {
         if(scanner.hasNextLine()) {
             System.out.println(" -> " + scanner.nextLine());
         }
     }
-    private int setMessage(Socket socket) {
+
+    private void setMessage(Socket socket) {
         System.out.print(" <- ");
         String message = new Scanner(System.in).nextLine();
         printWriter.println(message);
-        if(message.equals("EXIT_SERVER")) {
-            return EXIT_SERVER;
-        }
-        return 0;
     }
-    @Override
+
     public void run() {
         try {
             initSocket();
-            getMessage(socket);
+            receiveMessage(socket);
             while(true) {
-                if(setMessage(socket) == EXIT_SERVER) {
-                    break;
-                }
+                setMessage(socket);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-
 }
