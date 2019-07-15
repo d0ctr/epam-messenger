@@ -7,7 +7,8 @@ import java.util.Scanner;
 public class Client implements Runnable {
     private Socket socket;
     private PrintWriter printWriter;
-    private Scanner scanner;
+    private Scanner socketScanner;
+    private Scanner inputScanner;
     private int port;
     private String address;
     private final int EXIT_SERVER = 1;
@@ -19,20 +20,20 @@ public class Client implements Runnable {
 
     private void initSocket() throws IOException {
        socket = new Socket(address, port);
-       scanner = new Scanner(socket.getInputStream());
+       socketScanner = new Scanner(socket.getInputStream());
+       inputScanner = new Scanner(System.in);
        printWriter = new PrintWriter(socket.getOutputStream(), true);
     }
 
     private void receiveMessage(Socket socket) {
-        if(scanner.hasNextLine()) {
-            System.out.println(" -> " + scanner.nextLine());
+        if(socketScanner.hasNextLine()) {
+            System.out.println(" -> " + socketScanner.nextLine());
         }
     }
 
     private void setMessage(Socket socket) {
         System.out.print(" <- ");
-        String message = new Scanner(System.in).nextLine();
-        printWriter.println(message);
+        printWriter.println(inputScanner.nextLine());
     }
 
     public void run() {
