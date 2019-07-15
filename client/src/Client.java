@@ -10,7 +10,7 @@ public class Client implements Runnable {
     private Scanner scanner;
     private int port;
     private String address;
-    private final int EXIT_SERVER  = 1;
+    private final int EXIT_SERVER = 1;
 
     public Client(String address, int port) {
         this.port = port;
