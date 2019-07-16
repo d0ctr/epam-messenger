@@ -1,17 +1,15 @@
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Client implements Runnable {
+public class Client {
     private Socket socket;
-    private PrintWriter printWriter;
-    private Scanner socketScanner;
-    private Scanner inputScanner;
     private int port;
+    private Scanner in;
+    private PrintWriter out;
+    private Scanner consoleIn;
     private String address;
-    private final int EXIT_SERVER = 1;
 
     public Client(String address, int port) {
         this.port = port;
@@ -20,28 +18,21 @@ public class Client implements Runnable {
 
     private void initSocket() throws IOException {
        socket = new Socket(address, port);
-       socketScanner = new Scanner(socket.getInputStream());
-       inputScanner = new Scanner(System.in);
-       printWriter = new PrintWriter(socket.getOutputStream(), true);
+       in = new Scanner(socket.getInputStream());
+       out = new PrintWriter(socket.getOutputStream(), true);
+       consoleIn = new Scanner(System.in);
     }
 
-    private void receiveMessage(Socket socket) {
-        if(socketScanner.hasNextLine()) {
-            System.out.println(" -> " + socketScanner.nextLine());
-        }
-    }
-
-    private void setMessage(Socket socket) {
-        System.out.print(" <- ");
-        printWriter.println(inputScanner.nextLine());
-    }
-
-    public void run() {
+    public void start() {
         try {
             initSocket();
-            receiveMessage(socket);
-            while(true) {
-                setMessage(socket);
+            new Thread(() -> {
+                while (in.hasNextLine()) {
+                    System.out.println(in.nextLine());
+                }
+            }).start();
+            while(consoleIn.hasNextLine()) {
+                out.println(consoleIn.nextLine());
             }
         } catch (IOException e) {
             e.printStackTrace();
