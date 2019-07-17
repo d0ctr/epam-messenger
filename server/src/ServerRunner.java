@@ -6,7 +6,7 @@ public class ServerRunner {
                 port = Integer.parseInt(args[0]);
                 if(port > 1024) {
                     Server server = new Server(port);
-                    new Thread(server).start();
+                    server.start();
                 }
             }
             catch (NumberFormatException e) {
