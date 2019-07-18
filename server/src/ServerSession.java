@@ -8,6 +8,11 @@ public class ServerSession {
     private PrintWriter out;
     private Server server;
     private String clientName;
+
+    public String getClientName() {
+        return clientName;
+    }
+
     public ServerSession(Socket client, Server server) throws IOException {
         in = new Scanner(client.getInputStream());
         out = new PrintWriter(client.getOutputStream(), true);
@@ -20,6 +25,7 @@ public class ServerSession {
         while(in.hasNextLine()) {
             server.sendAll(clientName, in.nextLine());
         }
+        server.sendAll("Server", clientName + " has disconnected");
     }
 
     public void send(String author, String msg) {

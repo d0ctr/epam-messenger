@@ -25,6 +25,7 @@ public class Server {
             while(true) {
                 Socket newClient = serverSocket.accept();
                 ServerSession newClientSession = new ServerSession(newClient, this);
+                sendAll("Server", newClientSession.getClientName() + " has connected");
                 clientList.add(newClientSession);
                 new Thread(newClientSession::start).start();
             }

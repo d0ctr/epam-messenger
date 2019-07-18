@@ -10,6 +10,7 @@ public class Client {
     private PrintWriter out;
     private Scanner consoleIn;
     private String address;
+    private ClientMainForm clientMainForm;
 
     public Client(String address, int port) {
         this.port = port;
@@ -26,14 +27,13 @@ public class Client {
     public void start() {
         try {
             initSocket();
+            clientMainForm = new ClientMainForm(out);
+            clientMainForm.start();
             new Thread(() -> {
                 while (in.hasNextLine()) {
-                    System.out.println(in.nextLine());
+                    clientMainForm.receiveMessage(in.nextLine());
                 }
             }).start();
-            while(consoleIn.hasNextLine()) {
-                out.println(consoleIn.nextLine());
-            }
         } catch (IOException e) {
             e.printStackTrace();
         }
