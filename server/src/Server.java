@@ -8,10 +8,12 @@ public class Server {
     private ServerSocket serverSocket;
     private List<ServerSession> clientList;
     private int port;
+    private ServerMainForm serverMainForm;
 
     public Server(int port) {
         this.port= port;
         clientList = new ArrayList<>();
+        serverMainForm = new ServerMainForm();
     }
 
     private void initServer() throws IOException {
@@ -22,11 +24,13 @@ public class Server {
     public void start() {
         try {
             initServer();
+            serverMainForm.start();
             while(true) {
                 Socket newClient = serverSocket.accept();
                 ServerSession newClientSession = new ServerSession(newClient, this);
                 sendAll("Server", newClientSession.getClientName() + " has connected");
                 clientList.add(newClientSession);
+                serverMainForm.updateUsersList(clientList);
                 new Thread(newClientSession::start).start();
             }
 
@@ -35,7 +39,8 @@ public class Server {
         }
     }
 
-    public void sendAll(String clientName, String nextLine) {
-        clientList.forEach(c -> c.send(clientName, nextLine));
+    public void sendAll(String clientName, String msg) {
+        clientList.forEach(c -> c.send(clientName, msg));
+        serverMainForm.receiveMessage(clientName, msg);
     }
 }
