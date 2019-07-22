@@ -37,11 +37,7 @@ public class ServerSession implements Runnable {
                     server.sendMessageToAll(clientMessage);
                 }
 
-                Thread.sleep(100);
             }
-        }
-        catch (InterruptedException ex) {
-            ex.printStackTrace();
         }
         finally {
             this.close();
