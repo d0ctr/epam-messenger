@@ -29,6 +29,7 @@ public class MessengerWindow {
     private PrintWriter out;
     static String userName;
     private boolean shiftPressed = false;
+    private static final String  address = "localhost";
 
 
     @FXML
@@ -36,8 +37,6 @@ public class MessengerWindow {
         areaMesseng.setEditable(false);
         onlineUser.setText("Online: " + userName);
             try {
-                // подключаемся к серверу
-                String address = "localhost";
                 socket = new Socket(address, port);
                 in = new Scanner(socket.getInputStream());
                 out = new PrintWriter(socket.getOutputStream());
@@ -48,15 +47,8 @@ public class MessengerWindow {
             try {
                 // бесконечный цикл
                 while (true) {
-                    // если есть входящее сообщение
-                    if (in.hasNext()) {
-                        // считываем его
-                        String inMes = in.nextLine();
-                            // выводим сообщение
-                            areaMesseng.appendText(inMes);
-                            // добавляем строку перехода
+                            areaMesseng.appendText(in.nextLine());
                             areaMesseng.appendText("\n");
-                    }
                 }
             } catch (Exception e) { e.printStackTrace();}
         }).start();
