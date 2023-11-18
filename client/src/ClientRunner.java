@@ -1,18 +1,17 @@
-public class ClientRunner {
-    private static String address = "localhost";
-    private static int port;
-    public static void main(String[] args) {
-        if(!args[0].equals("")) {
-            try {
-                port = Integer.parseInt(args[0]);
-                if(port > 1024) {
-                    Client client = new Client(address, port);
-                    new Thread(client::start).start();
-                }
-            }
-            catch (NumberFormatException e) {
-                e.getStackTrace();
-            }
-        }
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+public class ClientRunner extends Application {
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        Parent root = FXMLLoader.load(getClass().getResource("MainWind.fxml"));
+        primaryStage.setTitle("Epam messenger team#4");
+        primaryStage.setScene(new Scene(root, 650, 343));
+        primaryStage.setResizable(false);
+        primaryStage.show();
     }
+    public static void main(String[] args){ launch(args);}
 }

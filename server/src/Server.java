@@ -1,40 +1,43 @@
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.IOException;
 
 public class Server {
     private ServerSocket serverSocket;
     private List<ServerSession> clientList;
     private int port;
 
-    public Server(int port) {
-        this.port= port;
-        clientList = new ArrayList<>();
-    }
-
     private void initServer() throws IOException {
         serverSocket = new ServerSocket(port);
     }
 
+    public Server(int port) {
+        this.port = port;
+        clientList = new ArrayList<>();
 
-    public void start() {
         try {
             initServer();
-            while(true) {
+            System.out.println("Сервер запущен!");
+            while (true) {
                 Socket newClient = serverSocket.accept();
                 ServerSession newClientSession = new ServerSession(newClient, this);
                 clientList.add(newClientSession);
-                new Thread(newClientSession::start).start();
+                new Thread(newClientSession).start();
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void sendAll(String clientName, String nextLine) {
-        clientList.forEach(c -> c.send(clientName, nextLine));
+    void sendMessageToAll(String msg) {
+        for (ServerSession o : clientList) {
+            o.sendMsg(msg);
+        }
+    }
+
+    void removeClient(ServerSession clientDeletion) {
+        clientList.remove(clientDeletion);
     }
 }

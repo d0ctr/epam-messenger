@@ -3,26 +3,59 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class ServerSession {
+public class ServerSession implements Runnable {
     private Scanner in;
     private PrintWriter out;
     private Server server;
-    private String clientName;
-    public ServerSession(Socket client, Server server) throws IOException {
+    private static int clientsCount = 0;
+
+    ServerSession(Socket client, Server server) throws IOException {
+        clientsCount++;
         in = new Scanner(client.getInputStream());
         out = new PrintWriter(client.getOutputStream(), true);
-        clientName = "User " + System.currentTimeMillis();
         this.server = server;
     }
 
-    public void start() {
-        out.println("Server >> You've connected to server.");
-        while(in.hasNextLine()) {
-            server.sendAll(clientName, in.nextLine());
+    @Override
+    public void run() {
+        try {
+            while (true) {
+                server.sendMessageToAll("                                                Новый участник вошёл в чат!");
+                server.sendMessageToAll("                                                Клиентов в чате = " + clientsCount);
+                break;
+            }
+
+            while (true) {
+                if (in.hasNext()) {
+                    String clientMessage = in.nextLine();
+                    if (clientMessage.equalsIgnoreCase("##session##end##")) {
+                        break;
+                    }
+
+                    System.out.println(clientMessage);
+
+                    server.sendMessageToAll(clientMessage);
+                }
+
+            }
+        }
+        finally {
+            this.close();
         }
     }
 
-    public void send(String author, String msg) {
-        out.println(author + " >> " + msg);
+    void sendMsg(String msg) {
+        try {
+            out.println(msg);
+            out.flush();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
+    private void close() {
+        server.removeClient(this);
+        clientsCount--;
+        server.sendMessageToAll("                                                Клиентов в чате = " + clientsCount);
+    }
+
 }
